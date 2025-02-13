@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -22,7 +23,7 @@ public class Client {
         Map<String, String> stockLists = sa.getStocksListsInListCategory(text, selectedCategoryName);
 
         int i = 0;
-        for (Map.Entry<String, String> entry : stockLists.entrySet()) { 
+        for (Map.Entry<String, String> entry : stockLists.entrySet()) {
             System.out.println(i + ". " + entry.getKey());
             i++;
         }
@@ -31,24 +32,35 @@ public class Client {
 
         System.out.println("This is the list of top companies by change percentage:");
         int selectedList = scanner.nextInt();
-        StockAnalyst s = new StockAnalyst();
         String listUrl = "";
+        String listUrlText = "";
         i = 0;
-        for (Map.Entry<String, String> entry : stockLists.entrySet()) { 
-            if (i == selectedList)
-            {
+        for (Map.Entry<String, String> entry : stockLists.entrySet()) {
+            if (i == selectedList) {
                 listUrl = entry.getValue();
                 break;
             }
             i++;
         }
-        listUrl = sa.getUrlText(listUrl);
-        TreeMap<Double, String> treeMap = new TreeMap<>();
-        treeMap = sa.getTopCompaniesByChangeRate(listUrl, 20);
-        int j = 0;
-        for (Double key : treeMap.keySet()) {
-            System.out.println(treeMap.get(key) + ", " + key + "%");
+        listUrlText = sa.getUrlText(listUrl); // Get text from the new url
+
+        TreeMap<Double, List<String>> treeMap = new TreeMap<>();
+
+        treeMap = sa.getTopCompaniesByChangeRate(listUrlText, 20);
+        for (Map.Entry<Double, List<String>> entry : treeMap.entrySet()) {
+            Double changeRate = entry.getKey();
+            List<String> companies = entry.getValue();
+
+            // If companies have duplicate change rate, print them out individually
+            if (companies.size() > 1) {
+                for (String company : companies) {
+                    System.out.println(company + ", " + changeRate + "%");
+                }
+            } else {
+                System.out.println(companies.get(0) + ", " + changeRate + "%");
+            }
         }
         System.out.println("##+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        scanner.close();
     }
 }
