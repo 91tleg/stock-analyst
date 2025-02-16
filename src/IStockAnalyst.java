@@ -46,5 +46,5 @@ public interface IStockAnalyst {
      * @return map that has the top companies and their change
      *         rate. Key is the change rate and value is the company name
      */
-    TreeMap<Double, String> getTopCompaniesByChangeRate(final String urlText, int topCount);
+    TreeMap<Double, List<String>> getTopCompaniesByChangeRate(final String urlText, int topCount);
 }
