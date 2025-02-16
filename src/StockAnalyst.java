@@ -62,8 +62,24 @@ public class StockAnalyst implements IStockAnalyst {
         return lists;
     }
 
+    // Helper method for cases with two tables
+    public Map<String, String> getSubUrl(final String urlText) {
+        Map<String, String> map = new HashMap<>();
+        Pattern pattern = Pattern.compile("<h2>(.*?)</h2>.*?\n.*</tbody>");
+        Matcher matcher = pattern.matcher(urlText);
+
+        while (matcher.find()) {
+            String tableName = matcher.group(1);
+            String subUrlText = matcher.group(0);
+            map.put(tableName, subUrlText);
+        }
+        return map;
+    }
+
     public TreeMap<Double, List<String>> getTopCompaniesByChangeRate(final String urlText, int topCount) {
-        TreeMap<Double, List<String>> topCompanies = new TreeMap<>();
+        TreeMap<Double, List<String>> topCompanies = new TreeMap<>(Collections.reverseOrder());
+        
+
         Pattern pattern = Pattern.compile(
                 "<td.*?\"slw svelte-utsffj\">(.*?)</td>.*?(rg svelte-utsffj\">(.*?)%</td>|rr svelte-utsffj\">(.*?)%</td>)");
         Matcher matcher = pattern.matcher(urlText);
